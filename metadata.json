@@ -1,0 +1,6 @@
+{
+  "name": "Farmer's Friend - Crop Health Intelligence Platform",
+  "description": "Detect Early. Validate Smartly. Act Safely. SIH 2026 prototype for early crop disease and pest detection, risk forecasting, expert validation, and persistent field-health memory.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
