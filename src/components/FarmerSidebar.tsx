@@ -13,11 +13,10 @@ import {
   Lightbulb,
   Database,
   History,
-  FolderArchive,
   Sprout,
   LucideIcon,
 } from 'lucide-react';
-import { Language } from '../types';
+import { Language, User } from '../types';
 import { TRANSLATIONS } from '../i18n/translations';
 
 interface FarmerSidebarProps {
@@ -25,9 +24,9 @@ interface FarmerSidebarProps {
   onTabChange: (tab: string) => void;
   onOpenScanModal: () => void;
   onOpenSettingsModal: () => void;
-  onOpenDownloadZipModal: () => void;
   language: Language;
   unreadAlertsCount: number;
+  user: User;
 }
 
 interface NavItem {
@@ -50,9 +49,9 @@ export const FarmerSidebar: React.FC<FarmerSidebarProps> = ({
   onTabChange,
   onOpenScanModal,
   onOpenSettingsModal,
-  onOpenDownloadZipModal,
   language,
   unreadAlertsCount,
+  user,
 }) => {
   const t = TRANSLATIONS[language];
 
@@ -179,23 +178,23 @@ export const FarmerSidebar: React.FC<FarmerSidebarProps> = ({
   ];
 
   return (
-    <aside className="w-72 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(243,249,245,0.98))] border-r border-emerald-100 hidden md:flex flex-col justify-between h-screen sticky top-0 z-30 shrink-0 select-none shadow-[8px_0_30px_rgba(15,23,42,0.04)]">
+    <aside className="hidden lg:flex w-60 bg-[#153d2a] border-r border-[#28543b] flex-col justify-between h-[calc(100vh-4rem)] sticky top-16 z-30 shrink-0 select-none text-white">
       <div className="p-4 space-y-5 overflow-y-auto scrollbar-none">
 
         {/* Brand Header */}
         <div
           onClick={() => onTabChange('home')}
-          className="flex items-center gap-3 cursor-pointer py-2.5 px-2.5 rounded-2xl bg-white/80 border border-emerald-100 shadow-[0_8px_20px_rgba(16,185,129,0.08)] hover:bg-emerald-50 transition-all"
+          className="flex items-center gap-3 cursor-pointer py-2.5 px-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
         >
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-green-700 text-white flex items-center justify-center shadow-[0_12px_24px_rgba(16,185,129,0.28)] shrink-0">
+          <div className="w-10 h-10 rounded-lg bg-[#2f7046] text-white flex items-center justify-center shrink-0">
             <Sprout className="w-6 h-6" />
           </div>
           <div>
-            <span className="font-extrabold text-lg text-stone-900 tracking-tight block leading-tight">
+            <span className="font-bold text-sm text-white block leading-tight">
               FARMER'S FRIEND
             </span>
-            <span className="text-[11px] text-emerald-700 font-bold">
-              {language === 'mr' ? 'शेतकऱ्यांचा मित्र' : language === 'hi' ? 'किसान का दोस्त' : 'Crop Health Intelligence'}
+            <span className="text-[11px] text-emerald-100">
+              {language === 'mr' ? 'शेतकऱ्यांचा मित्र' : language === 'hi' ? 'किसान का दोस्त' : 'Farm companion'}
             </span>
           </div>
         </div>
@@ -204,7 +203,7 @@ export const FarmerSidebar: React.FC<FarmerSidebarProps> = ({
         <nav className="space-y-4">
           {navGroups.map((g, idx) => (
             <div key={idx} className="space-y-1">
-              <span className="text-[11px] font-extrabold text-stone-400 uppercase tracking-wider block px-3 mb-1.5">
+              <span className="text-[10px] font-semibold text-emerald-100/70 uppercase tracking-wide block px-3 mb-1.5">
                 {g.group}
               </span>
               <div className="space-y-1">
@@ -217,18 +216,15 @@ export const FarmerSidebar: React.FC<FarmerSidebarProps> = ({
                       <button
                         key={item.id}
                         onClick={onOpenScanModal}
-                        className="w-full flex items-center gap-3 px-3 py-3.5 rounded-2xl font-extrabold bg-emerald-700 hover:bg-emerald-800 text-white shadow-sm transition-all cursor-pointer"
+                        className="w-full flex items-center gap-3 px-3 py-3 rounded-lg font-semibold bg-[#2f7046] hover:bg-[#3a8052] text-white transition-colors cursor-pointer"
                       >
                         <span className="text-2xl shrink-0">{item.emoji}</span>
                         <div className="flex-1 text-left">
                           <span className="block text-sm leading-tight">{item.label}</span>
                           {item.subLabel && (
-                            <span className="block text-[11px] text-emerald-200 font-medium mt-0.5">{item.subLabel}</span>
+                            <span className="block text-[11px] text-emerald-100/75 font-medium mt-0.5">{item.subLabel}</span>
                           )}
                         </div>
-                        <span className="text-[10px] bg-emerald-600 px-2 py-1 rounded-lg text-emerald-100 font-bold shrink-0">
-                          AI
-                        </span>
                       </button>
                     );
                   }
@@ -239,17 +235,17 @@ export const FarmerSidebar: React.FC<FarmerSidebarProps> = ({
                       onClick={() => onTabChange(item.id)}
                       className={`w-full flex items-center gap-3 px-3 py-3 rounded-2xl font-medium transition-all cursor-pointer ${
                         isActive
-                          ? 'bg-gradient-to-r from-emerald-50 to-white text-emerald-900 font-bold border border-emerald-200 shadow-[0_8px_18px_rgba(16,185,129,0.08)]'
-                          : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900 border border-transparent'
+                          ? 'bg-[#356e46] text-white font-semibold border border-white/10'
+                            : 'text-emerald-50/85 hover:bg-white/10 hover:text-white border border-transparent'
                       }`}
                     >
                       <span className="text-xl shrink-0">{item.emoji}</span>
                       <div className="flex-1 text-left min-w-0">
-                        <span className={`block text-sm leading-tight ${isActive ? 'text-emerald-900' : 'text-stone-800'}`}>
+                        <span className="block text-sm leading-tight">
                           {item.label}
                         </span>
                         {item.subLabel && (
-                          <span className={`block text-[11px] font-medium mt-0.5 truncate ${isActive ? 'text-emerald-700' : 'text-stone-400'}`}>
+                          <span className="block text-[11px] font-medium mt-0.5 truncate text-emerald-100/65">
                             {item.subLabel}
                           </span>
                         )}
@@ -269,26 +265,17 @@ export const FarmerSidebar: React.FC<FarmerSidebarProps> = ({
       </div>
 
       {/* Sidebar Footer */}
-      <div className="p-4 border-t border-emerald-100 bg-[linear-gradient(180deg,_rgba(255,255,255,0.9),_rgba(237,248,243,0.95))] space-y-2">
+      <div className="p-3 border-t border-white/10 bg-[#113522] space-y-2">
+        <div className="flex items-center gap-3 rounded-lg px-2 py-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#dcebdc] text-sm font-bold text-[#153d2a]">{user.name.charAt(0)}</div>
+          <div className="min-w-0"><span className="block truncate text-sm font-semibold text-white">{user.name}</span><span className="block text-xs text-emerald-100/70">{language === 'mr' ? 'शेतकरी' : language === 'hi' ? 'किसान' : 'Farmer'}</span></div>
+        </div>
         <button
           onClick={onOpenSettingsModal}
-          className="w-full flex items-center gap-3 px-3 py-3 rounded-2xl text-stone-700 hover:bg-emerald-50 hover:text-emerald-900 font-semibold cursor-pointer transition-colors border border-transparent hover:border-emerald-100"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-emerald-50/85 hover:bg-white/10 hover:text-white font-medium cursor-pointer transition-colors"
         >
-          <Settings className="w-5 h-5 text-stone-400 shrink-0" />
+          <Settings className="w-5 h-5 text-emerald-100/75 shrink-0" />
           <span className="text-sm">{language === 'mr' ? 'सेटिंग्ज' : language === 'hi' ? 'सेटिंग' : 'Account Settings'}</span>
-        </button>
-
-        <button
-          onClick={onOpenDownloadZipModal}
-          className="w-full flex items-center justify-between px-3 py-3 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 text-amber-900 border border-amber-200 font-semibold cursor-pointer transition-colors shadow-[0_8px_20px_rgba(251,191,36,0.08)]"
-        >
-          <div className="flex items-center gap-3">
-            <FolderArchive className="w-5 h-5 text-amber-700 shrink-0" />
-            <span className="text-sm">{language === 'mr' ? 'स्त्रोत डाउनलोड' : language === 'hi' ? 'सोर्स डाउनलोड' : 'Download Source'}</span>
-          </div>
-          <span className="text-[10px] bg-amber-200 text-amber-950 px-1.5 py-0.5 rounded font-mono font-bold shrink-0">
-            154 KB
-          </span>
         </button>
       </div>
     </aside>

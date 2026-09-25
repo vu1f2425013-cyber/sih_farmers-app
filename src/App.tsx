@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
-import { FarmerSidebar } from './components/FarmerSidebar';
 import { MobileBottomNav } from './components/MobileBottomNav';
-import { JudgeDemoBanner } from './components/JudgeDemoBanner';
-import { FarmerDashboard } from './components/FarmerDashboard';
+import { FarmerSidebar } from './components/FarmerSidebar';
+import { FarmerHomeDashboard } from './components/FarmerHomeDashboard';
 import { FieldList } from './components/FieldList';
 import { FieldHealthProfile } from './components/FieldHealthProfile';
 import { AdvisorView } from './components/AdvisorView';
@@ -25,7 +24,6 @@ import { FarmDataDashboard } from './components/FarmDataDashboard';
 import { FarmDataImportModal } from './components/FarmDataImportModal';
 import { AccountSettingsModal } from './components/AccountSettingsModal';
 import { QuickAddFieldModal } from './components/QuickAddFieldModal';
-import { DownloadZipModal } from './components/DownloadZipModal';
 import {
   Field,
   HealthCase,
@@ -38,7 +36,7 @@ import {
 } from './types';
 import { api } from './services/api';
 import { TRANSLATIONS } from './i18n/translations';
-import { Bell, FolderArchive } from 'lucide-react';
+import { Bell } from 'lucide-react';
 
 export function App() {
   // Authentication & User Session State
@@ -68,8 +66,6 @@ export function App() {
   const [isQuickAddModalOpen, setIsQuickAddModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
-  const [isDownloadZipModalOpen, setIsDownloadZipModalOpen] = useState(false);
-
   const [lastSyncTime, setLastSyncTime] = useState('Live');
   const [loading, setLoading] = useState(true);
 
@@ -211,14 +207,7 @@ export function App() {
   const unreadAlertsCount = alerts.filter((a) => !a.read).length;
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(16,185,129,0.12),_transparent_24%),linear-gradient(180deg,_#f5faf6_0%,_#edf8f3_28%,_#f9faf7_100%)] font-sans text-stone-900 flex flex-col selection:bg-emerald-100 selection:text-emerald-900">
-      {/* SIH Judge Demo Quick-Runner Banner */}
-      <JudgeDemoBanner
-        onScenarioTriggered={handleScenarioTriggered}
-        onReset={handleReset}
-        onDownloadZip={() => setIsDownloadZipModalOpen(true)}
-      />
-
+    <div className="min-h-screen bg-[linear-gradient(180deg,_#f8faf7_0%,_#f2f7f3_26%,_#ffffff_100%)] font-sans text-stone-900 flex flex-col selection:bg-emerald-100 selection:text-emerald-900">
       {/* Main Top Navigation */}
       <Navbar
         currentUser={currentUser}
@@ -233,29 +222,26 @@ export function App() {
         onTabChange={setActiveTab}
         onOpenScanModal={() => handleOpenScan()}
         onOpenSettingsModal={() => setIsSettingsModalOpen(true)}
-        onOpenDownloadZipModal={() => setIsDownloadZipModalOpen(true)}
         onLogout={handleLogout}
         unreadAlertsCount={unreadAlertsCount}
         lastSyncTime={lastSyncTime}
       />
 
       {/* Responsive Main Layout Container */}
-      <div className="flex-1 flex w-full">
-        {/* Farmer Sidebar for Desktop */}
+      <div className="flex-1 flex w-full min-w-0">
         {currentRole === 'farmer' && (
           <FarmerSidebar
             activeTab={activeTab}
             onTabChange={setActiveTab}
             onOpenScanModal={() => handleOpenScan()}
             onOpenSettingsModal={() => setIsSettingsModalOpen(true)}
-            onOpenDownloadZipModal={() => setIsDownloadZipModalOpen(true)}
             language={language}
             unreadAlertsCount={unreadAlertsCount}
+            user={currentUser}
           />
         )}
-
         {/* Main Content Area */}
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-12">
+        <main className="flex-1 min-w-0 max-w-[1500px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-12">
           {loading ? (
             <div className="py-24 text-center space-y-3">
               <div className="w-10 h-10 rounded-full border-4 border-emerald-200 border-t-emerald-700 animate-spin mx-auto" />
@@ -269,15 +255,15 @@ export function App() {
               {currentRole === 'farmer' && (
                 <>
                   {activeTab === 'home' && (
-                    <FarmerDashboard
+                    <FarmerHomeDashboard
                       fields={fields}
                       cases={cases}
                       alerts={alerts}
                       language={language}
+                      user={currentUser}
                       onOpenScanModal={handleOpenScan}
                       onViewFieldHealth={handleViewFieldHealth}
                       onViewAllFields={() => setActiveTab('fields')}
-                      onOpenFollowUpModal={handleOpenFollowUp}
                       onNavigateTab={setActiveTab}
                     />
                   )}
@@ -462,7 +448,6 @@ export function App() {
           onTabChange={setActiveTab}
           onOpenScanModal={() => handleOpenScan()}
           onOpenSettingsModal={() => setIsSettingsModalOpen(true)}
-          onOpenDownloadZipModal={() => setIsDownloadZipModalOpen(true)}
           language={language}
           unreadAlertsCount={unreadAlertsCount}
         />
@@ -522,33 +507,15 @@ export function App() {
         onLogout={handleLogout}
       />
 
-      {/* Codebase Source ZIP Modal */}
-      <DownloadZipModal
-        isOpen={isDownloadZipModalOpen}
-        onClose={() => setIsDownloadZipModalOpen(false)}
-      />
-
       {/* Professional Footer */}
       <footer className="border-t border-stone-200 bg-white py-6 text-xs text-stone-500 hidden sm:block">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <span className="font-bold text-stone-900">FARMER'S FRIEND</span>
             <span>•</span>
-            <span>Smart India Hackathon (SIH) 2026</span>
-            <span>•</span>
             <span>Detect Early. Validate Smartly. Act Safely.</span>
           </div>
           <div className="flex items-center gap-4 text-stone-600">
-            <button
-              onClick={() => setIsDownloadZipModalOpen(true)}
-              className="font-bold text-emerald-700 hover:text-emerald-800 inline-flex items-center gap-1 cursor-pointer"
-            >
-              <FolderArchive className="w-3.5 h-3.5" />
-              <span>Download Source .ZIP (154 KB)</span>
-            </button>
-            <span>•</span>
-            <span>Server-Side Gemini 3.8 Flash</span>
-            <span>•</span>
             <span>Field Health Memory Core</span>
           </div>
         </div>

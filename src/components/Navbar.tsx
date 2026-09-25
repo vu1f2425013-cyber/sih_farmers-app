@@ -30,7 +30,6 @@ interface NavbarProps {
   onTabChange: (tab: string) => void;
   onOpenScanModal: () => void;
   onOpenSettingsModal: () => void;
-  onOpenDownloadZipModal: () => void;
   onLogout: () => void;
   unreadAlertsCount: number;
   lastSyncTime: string;
@@ -46,7 +45,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   onTabChange,
   onOpenScanModal,
   onOpenSettingsModal,
-  onOpenDownloadZipModal,
   onLogout,
   unreadAlertsCount,
   lastSyncTime,
@@ -54,22 +52,19 @@ export const Navbar: React.FC<NavbarProps> = ({
   const t = TRANSLATIONS[language];
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-stone-200 shadow-xs">
+    <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-stone-200 shadow-[0_10px_30px_rgba(15,23,42,0.03)]">
       {/* Top Main Navigation Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 gap-4">
+        <div className="flex items-center justify-between h-16 gap-2 sm:gap-4">
           {/* Brand Logo & Tagline */}
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => onTabChange('home')}>
-            <div className="w-10 h-10 rounded-xl bg-emerald-700 text-white flex items-center justify-center shadow-sm">
-              <Sprout className="w-6 h-6" />
+          <div className="flex items-center gap-2 sm:gap-3 cursor-pointer shrink-0" onClick={() => onTabChange('home')}>
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 text-white flex items-center justify-center shadow-[0_12px_20px_rgba(16,185,129,0.2)]">
+              <Sprout className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-lg text-emerald-950 tracking-tight">
+                <span className="font-bold text-xs sm:text-base lg:text-lg text-stone-900 tracking-tight">
                   {t.appName}
-                </span>
-                <span className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-semibold tracking-wide bg-emerald-100 text-emerald-800 rounded-md border border-emerald-200">
-                  SIH 2026
                 </span>
               </div>
               <p className="text-xs text-stone-500 hidden md:block">
@@ -79,29 +74,19 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* Quick Actions & User Controls */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Download Codebase ZIP Button */}
-            <button
-              onClick={onOpenDownloadZipModal}
-              title="Download Project Source Code (.ZIP)"
-              className="inline-flex items-center gap-1.5 px-3 py-2 bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-900 border border-amber-300 text-xs sm:text-sm font-semibold rounded-lg shadow-xs transition-all hover:shadow cursor-pointer"
-            >
-              <FolderArchive className="w-4 h-4 text-amber-700" />
-              <span className="hidden sm:inline">Download ZIP</span>
-              <span className="text-[10px] bg-amber-200 text-amber-950 px-1.5 py-0.5 rounded font-mono font-bold">154 KB</span>
-            </button>
-
+          <div className="flex items-center gap-1 sm:gap-3">
             {/* Primary Action Button: Scan Crop */}
             <button
               onClick={onOpenScanModal}
-              className="inline-flex items-center gap-2 px-3.5 py-2 bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-sm transition-all hover:shadow cursor-pointer"
+              aria-label={t.scan_crop}
+              className="inline-flex items-center gap-2 px-2.5 py-2 sm:px-3.5 bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-sm transition-all hover:shadow cursor-pointer"
             >
               <ScanLine className="w-4 h-4" />
-              <span>{t.scan_crop}</span>
+              <span className="hidden sm:inline">{t.scan_crop}</span>
             </button>
 
             {/* Language Selector */}
-            <div className="relative flex items-center bg-stone-100 rounded-lg p-0.5 border border-stone-200 text-xs">
+            <div className="hidden md:flex relative items-center bg-stone-100 rounded-lg p-0.5 border border-stone-200 text-xs">
               <button
                 onClick={() => onLanguageChange('en')}
                 className={`px-2 py-1 rounded-md font-medium transition-all ${
@@ -134,8 +119,19 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             </div>
 
+            <select
+              value={language}
+              aria-label="Select language"
+              onChange={(event) => onLanguageChange(event.target.value as Language)}
+              className="md:hidden h-9 max-w-14 rounded-lg border border-stone-200 bg-white px-1 text-xs text-stone-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700"
+            >
+              <option value="en">EN</option>
+              <option value="hi">हिं</option>
+              <option value="mr">मरा</option>
+            </select>
+
             {/* User Profile / Role Pill */}
-            <div className="flex items-center gap-2 bg-stone-100 border border-stone-200 rounded-xl px-2.5 py-1.5 text-xs">
+            <div className="hidden lg:flex items-center gap-2 bg-stone-100 border border-stone-200 rounded-xl px-2.5 py-1.5 text-xs">
               <div className="w-6 h-6 rounded-full bg-emerald-700 text-white flex items-center justify-center font-bold text-[11px]">
                 {currentUser?.name?.charAt(0) || 'U'}
               </div>
@@ -178,7 +174,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={onOpenSettingsModal}
               title="Account & Settings"
-              className="p-2 rounded-lg text-stone-600 hover:bg-stone-100 hover:text-stone-900 transition-colors cursor-pointer"
+              className="hidden sm:inline-flex p-2 rounded-lg text-stone-600 hover:bg-stone-100 hover:text-stone-900 transition-colors cursor-pointer"
             >
               <Settings className="w-4 h-4" />
             </button>
@@ -187,7 +183,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={onLogout}
               title="Sign Out"
-              className="p-2 rounded-lg text-stone-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+              className="hidden sm:inline-flex p-2 rounded-lg text-stone-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -196,7 +192,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       </div>
 
       {/* Sub-Navigation Tabs Bar */}
-      <div className="border-t border-stone-100 bg-stone-50/70 overflow-x-auto scrollbar-none">
+      <div className={currentRole === 'farmer' ? 'hidden' : 'border-t border-stone-100 bg-stone-50/70 overflow-x-auto scrollbar-none'}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between text-xs">
           <nav className="flex space-x-1 py-1.5 min-w-max">
             {currentRole === 'farmer' && (

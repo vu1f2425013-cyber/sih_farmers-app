@@ -15,7 +15,6 @@ import {
   Lightbulb,
   Database,
   History,
-  FolderArchive,
   Layers,
 } from 'lucide-react';
 import { Language } from '../types';
@@ -26,7 +25,6 @@ interface MobileBottomNavProps {
   onTabChange: (tab: string) => void;
   onOpenScanModal: () => void;
   onOpenSettingsModal: () => void;
-  onOpenDownloadZipModal: () => void;
   language: Language;
   unreadAlertsCount: number;
 }
@@ -36,7 +34,6 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   onTabChange,
   onOpenScanModal,
   onOpenSettingsModal,
-  onOpenDownloadZipModal,
   language,
   unreadAlertsCount,
 }) => {
@@ -302,14 +299,6 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                 </div>
               </div>
 
-              {/* Download Source CTA */}
-              <button
-                onClick={() => { setIsMoreOpen(false); onOpenDownloadZipModal(); }}
-                className="w-full py-4 bg-amber-50 hover:bg-amber-100 text-amber-950 border-2 border-amber-300 rounded-2xl font-extrabold flex items-center justify-center gap-3 cursor-pointer transition-colors"
-              >
-                <FolderArchive className="w-5 h-5 text-amber-700" />
-                <span>{language === 'mr' ? 'स्त्रोत डाउनलोड (.ZIP) — 154 KB' : language === 'hi' ? 'सोर्स डाउनलोड (.ZIP) — 154 KB' : 'Download Codebase (.ZIP) — 154 KB'}</span>
-              </button>
             </div>
           </div>
         </div>
